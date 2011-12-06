@@ -1,0 +1,3 @@
+Version 0.2-0
+
+  * Added support for manipulating a JSString object and making it into an jsval.

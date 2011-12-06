@@ -1,0 +1,3 @@
+The idea here is to read the XML documentation for the JS API for
+SpiderMonkey. We can then use this to generate R documentation,
+generate bindings, check if we have missed some elements (e.g. macros).

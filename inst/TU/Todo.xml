@@ -1,0 +1,26 @@
+
+<todo>
+<item>
+Make the routines that take a pointer return
+just the return value unless the pointers are 
+mutated.
+</item>
+
+<item>
+Handle JSErrorReporter and function pointers generally.
+<br/>
+Basically, we will just leave these as untyped pointers
+and define classes for each function pointer type
+each of which extends/contains RNativeRoutineReference.
+</item>
+
+<item>
+Put names on the inputs that are returned from callCIF.
+This would allow .C() like access to the individual names.
+And we should allow the caller to label the arguments.
+</item>
+
+<item status="low">
+Create the struct objects if we need them to be non-opaque.
+</item>
+</todo>

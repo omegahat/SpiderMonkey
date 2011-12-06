@@ -1,0 +1,8 @@
+ifndef SPIDER_MONKEY_DIR
+  SPIDER_MONKEY_DIR=/Users/duncan/Projects/JavaScript/js-1.8.0/js/src/
+endif
+
+OS_TYPE=Darwin
+
+PKG_CPPFLAGS=-I$(SPIDER_MONKEY_DIR) -I$(SPIDER_MONKEY_DIR)/$(OS_TYPE)_DBG.OBJ
+PKG_LIBS=-L$(SPIDER_MONKEY_DIR)/$(OS_TYPE)_DBG.OBJ -ljs

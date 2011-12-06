@@ -1,0 +1,17 @@
+AC_INIT(src/jsval.c)
+
+# We can use js-config with new versions of SpiderMonkey, i.e. 1.8.1
+# We can also look in /usr/local/include and other common places.
+
+if test -z "$SPIDER_MONKEY" ; then
+  echo "For now, please set the environment variable SPIDER_MONKEY to the location where you built the SpiderMonkey source"
+  echo "This should be the directory .../js/src"
+  exit 1
+fi
+
+
+AC_SUBST(SPIDER_MONKEY)
+OS_TYPE=`uname`
+AC_SUBST(OS_TYPE)
+
+AC_OUTPUT(src/Makevars)

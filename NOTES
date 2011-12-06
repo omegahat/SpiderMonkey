@@ -1,0 +1,7 @@
+
+http://egachine.berlios.de/embedding-sm-best-practice/ar01s02.html
+
+https://developer.mozilla.org/en/JavaScript_C_Engine_Embedder%27s_Guide
+
+
+ JS_NewGlobalObject doesn't exist. Use JS_NewObject(context, NULL, NULL, NULL)

@@ -1,0 +1,16 @@
+Package: SpiderMonkey
+Title: Embeds the JavaScript interpreter Spider Monkey within R
+Version: 0.2-0
+Author: Duncan Temple Lang
+Maintainer: Duncan Temple Lang <duncan@r-project.org>
+License: Mozilla
+Depends: RAutoGenRunTime, bitops
+Imports: Rffi
+Description:  This package provides a mechanism for
+  R to execute JavaScript, create JavaScript objects and
+  call JavaScript methods. This can be used  by embedding
+  the JavaScript engine in R or alternatively embedding
+  R within the a mozilla application, e.g. Firefox browser 
+  or Thunderbird and accessing the JavaScript  engine
+  "from within".
+

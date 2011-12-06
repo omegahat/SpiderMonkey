@@ -1,0 +1,97 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<html> <head>
+<link rel="stylesheet" href="http://www.omegahat.org/OmegaTech.css">
+<meta name="description" content="embedding JavaScript engine in R"/>
+<meta name="keywords" content="R, SpiderMonkey, javascript, embed"/>
+<title>R interface to JavaScript engine</title>
+</head>
+
+<body>
+<h1>The SpiderMoneky package</h1>
+<p align=right>Last Release:
+ <a href="@TAR_FILE@"> @VERSION@</a> (<font color="red">@DATE@</font>)
+
+
+<p> This package provides a means of evaluating JavaScript code,
+creating JavaScript objects and calling JavaScript functions and
+methods from within R.  This can work by embedding the JavaScript
+engine within an R session or by embedding R in an browser such as
+Firefox and being able to call R from JavaScript and call back to
+JavaScript from R.
+
+<p>
+The package is a thin R layer on top of the
+JavaScript API provided by the Mozilla implementation of
+JavaScript - SpiderMonkey.
+
+
+<p>
+The code is programmatically generated using
+the <a href="../RGCCTranslationUnit">RGCCTranslationUnit</a>
+and <a href="../RGCCTUFFI">RGCCTUFFI</a> packages
+and uses the <a href="../Rffi">Rffi</a> package
+to implement the invocation of the C routines (rather than .C() and .Call()).
+
+<h2>Why is this useful?</h2>
+
+The primary motivation is to allow R programmers manipulate JavaScript
+objects such as the DOM and all of its properties and methods
+without having to write JavaScript code.
+This is useful when we embed R inside a Web browser such as Firefox
+as an extension. JavaScript code can call R and then that R code
+can
+<ul>
+  <li> manipulate the JavaScript objects to modify the content of the
+Web page being displayed,
+  <li> draw in JavaScript or SVG canvases by adding
+elements,
+  <li> register R functions as event handlers, and so
+</ul>
+These R functions can work with data in R and in JavaScript and can
+produce statistical content that is dynamically displayed within the
+browser.
+The same can be done by writing JavaScript code that calls R
+functions,
+but this
+<ul>
+  <li> avoids R users needing to know JavaScript extensiely
+  <li> puts some computations closer to the data and avoids the
+      overhead of marshalling large quantities of JavaScript data to R.
+</ul>  
+
+<p>
+A second use of this package is to allow R programmers to utilize
+code written in JavaScript. Most JavaScript code is designed for
+Web pages and needs the DOM object to be of use. However, JavaScript
+is seeing increased use and people are writing libraries in JavaScript
+to do different things outside of the DOM.
+
+<p>
+At the very least, we can use this to emulate a Web browser and how it
+handles Web pages. We can download the HTML for a page and evaluate
+the JavaScript content to mimic how, for example, forms are processed
+by dynamic JavaScript code.
+
+
+
+<h2>Documentation</h2>
+There are help pages for all of the functions and several non-trivial
+examples
+including a description of the implementation  of the <a href="../GeoIP">GeoIP</a> package
+in that package.
+
+<dl>
+  <dt>
+  <li> 
+  <dd>
+</dl>
+
+
+
+<hr>
+<address><a href="http://www.stat.ucdavis.edu/~duncan/">Duncan Temple Lang</a>
+<a href=mailto:duncan@wald.ucdavis.edu>&lt;duncan@wald.ucdavis.edu&gt;</a></address>
+<!-- hhmts start -->
+Last modified: Wed Jan 26 16:15:31 PST 2011
+<!-- hhmts end -->
+</body> </html>

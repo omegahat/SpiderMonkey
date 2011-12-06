@@ -1,0 +1,220 @@
+<?xml version="1.0"?>
+<article xmlns:r="http://www.r-project.org"
+         xmlns:xi="http://www.w3.org/2003/XInclude">
+
+<articleinfo>
+
+<title></title>
+
+<author><firstname>Duncan</firstname><surname>Temple Lang</surname>
+  <affiliation><orgname>University of California at Davis</orgname>
+               <orgdiv>Department of Statistics</orgdiv>
+  </affiliation>
+</author>
+</articleinfo>
+
+<section>
+<title></title>
+
+<para>
+We start by reading the LXR XML file
+<r:code>
+library(XML)
+doc = xmlParse("http://mxr.mozilla.org/mozilla/source/js/docs/jsref.xml?raw=1")
+</r:code>
+
+Next we find all the ENTRY nodes:
+<r:code>
+e = getNodeSet(doc, "//ENTRY[@id]")
+ids = names(e) = sapply(e, xmlGetAttr, "id")
+</r:code>
+
+
+</para>
+<para>
+We want to compare the entries in the XML document with those
+we found in the translation unit. See ../TU/tu.R.
+We have borrowed the code from there:
+<r:code>
+library(RGCCTranslationUnit)
+tu = parseTU("../TU/js.c.001t.tu")
+
+r = getRoutines(tu)
+
+jsFuncNames = grep("^JS_", names(r), val = TRUE)
+</r:code>
+
+
+
+
+To find the names of the elements in the API that we
+did not find in the TU, we use 
+<r:code>
+miss = setdiff(ids, jsFuncNames)
+</r:code>
+There are 60 of these and these are mainly macros.
+The fully capitalized names are most likely macros.
+What about the others:
+
+<r:code>
+i = grep("[a-z]", miss, value = TRUE)
+</r:code>
+This yields 14 elements, including JS_NewRuntime, JS_DestroyRuntime
+which are simple macro aliases for JS_Init and JS_Finish.
+Let's look at the TYPE element within each of these:
+
+<r:code>
+table(sapply(e[i], function(x)  xmlGetAttr(x[["TYPE"]], "value")))
+</r:code>
+So there are three "Function" elements:
+
+<r:code>
+i [ sapply(e[i], function(x)  xmlGetAttr(x[["TYPE"]], "value")) == "Function" ]
+</r:code>
+JS_DumpNamedRoots is conditionally defined (via the DEBUG definition),
+JS_NewIdArray and JS_DefineUCPropertyWithTinyID do not appear in the 
+SpiderMonkey source. Perhaps these are new routines?
+
+
+</para>
+<para>
+Next we find out  what routines we pulled from the TU that are not
+officially in the API documentation.
+
+<r:code>
+extra = setdiff(jsFuncNames, ids)
+</r:code>
+These 187 elements are routines we found in the TU.
+They are probably not part of jsapi.h but come from other files
+and are not "hidden".
+
+<r:code>
+loc = sapply(r[extra], function(x) x$node[["srcp"]])
+table(gsub(":.*", "", loc))
+</r:code>
+So there are two in jsapi.h - JS_CallTracer, JS_TraceChildren.
+128 are from jsapi.c and so should not be included.
+This was all because we included jaspi.c in our TU generating file,
+not just jsapi.h.
+When we make this change, we end up with 128 extra elements.
+126 come from jsapi.h, and 2 (JS_Abort and JS_Backtrace) come from jsutil.h.
+
+
+</para>
+
+
+<para>
+We can now look at data structures.
+Those in the LXR file are given by 
+
+<r:code>
+type = sapply(e, function(x) xmlGetAttr(x[["TYPE"]], "value"))
+xds = e[ type  == "Data Structure" ]
+names(xds)
+</r:code>
+
+</para>
+<para>
+Let's look at the macros:
+
+<r:code>
+macros = e [ type == "Macro" ]
+</r:code>
+23 of these are JSVAL_IS or JSVAL_TO or TO_JSVAL macros
+for processing jsval objects:
+<r:code>
+grep("(JSVAL_(TO|IS)|TO_JSVAL)", names(macros))
+</r:code>
+</para>
+<para>
+Three of the remaining 26 macros have lower-case characters
+in their names and appear to be aliases as mentioned above.
+However, JS_GetTypeName seems like it is erroneously identified
+as a MACRO rather than a Function.
+</para>
+<para>
+
+<r:code>
+rest = macros[ !grepl("(JSVAL_(TO|IS)|TO_JSVAL|[a-z])", names(macros)) ]
+</r:code>
+
+The XML for these entries does not detail the parameters.
+So we can parse the syntax element in the XML and 
+see the parameters:
+<r:code>
+ex = sapply(rest, function(x) parse(text = xmlValue(x[["SYNTAX"]])))
+</r:code>
+Macros that take no arguments will be "name" objects in our R expressions,
+and those that do take arguments will be calls.
+
+<r:code>
+table(sapply(ex, class))
+</r:code>
+So only 5 of these take parameters.
+
+</para>
+<para>
+We can process the macros  via the RGCCTranslationUnit package
+and its
+<r:func>getCppDefines</r:func> and <r:func>processCppDefines</r:func>.
+
+<r:code>
+defs = getCppDefines("~/Projects/JavaScript/js/src/jsapi.h",
+                     "-DXP_UNIX -I/Users/duncan/Projects/JavaScript/js/src/Darwin_DBG.OBJ")
+pdefs = processDefines(defs, tu = tu)
+</r:code>
+
+This yields a list with 4 elements - parameterizedMacros, macros, flagDefines and ignored.
+The macros are macros that take  no arguments.
+
+We start by looking only at the macros starting with "JS":
+<r:code>
+fdefs = lapply(pdefs, function(x) x[grepl("^JS", names(x)) ])
+</r:code>
+</para>
+<para>
+
+Some of these macros are JSOPTION definitions
+<r:code>
+grep("JSOPTION", names( fdefs$macros), val = TRUE)
+</r:code>
+All of these are calls to JS_BIT():
+<r:code>
+fdefs$macros[ grep("JSOPTION", names( fdefs$macros), val = TRUE) ]
+</r:code>
+So we could calculate these either at compile/installation time
+or create a C routine that computes them dynamically.
+
+</para>
+<para>
+There are 30 macros that start with JS_HAS:
+
+<r:code>
+fdefs$macros[ grep("JS_HAS", names( fdefs$macros), val = TRUE) ]
+</r:code>
+All but one of these expand to literal integers. One is 
+a simple comparison of another macro value to a literal value.
+So if we can arrange to evaluate these in the correct order, we can
+just use these as simple R expressions.
+
+</para>
+<para>
+Let's look at the parameterized macros.
+Let's organize them by prefix:
+
+<r:code>
+tmp = strsplit(names(fdefs$parameterizedMacros), "_")
+table(sapply(tmp, `[`, 1))
+</r:code>
+
+So we can split them by this set of prefixes:
+<r:code>
+pgroups = split(fdefs$parameterizedMacros, sapply(tmp, `[`, 1))
+</r:code>
+
+
+</para>
+
+
+</section>
+</article>

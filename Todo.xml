@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<?xml-stylesheet type="text/xsl" href="../../OmegahatXSL/XSL/OmegahatXSL/Todo.xsl" ?>
+
+<topics>
+
+
+<topic>
+<title></title>
+<items>
+<item>
+Where we have a jsval, change the type to a pointerType.
+<br/>
+Do this in the RGCCTUFFI.
+</item>
+
+<item>
+Ideally allow JS_DefineProperty to convert an R 
+number or string to a jsval in the function.
+</item>
+
+
+<item>
+Use an R function as a JavaScript method.
+</item>
+
+
+<item>
+Calling an object's method.
+<br/>
+How do we define such an object when running stand-alone code.
+<br/>
+Easy!  Just eval a script that sets the function on this.
+<br/>
+We can also use the JS_CompileFunction and  JS_NewFunction
+</item>
+
+<item>
+How to add our own println method in the global?
+</item>
+</items>
+</topic>
+
+</topics>

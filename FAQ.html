@@ -1,0 +1,33 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<html> <head>
+<title></title>
+</head>
+
+<body>
+<h1></h1>
+
+<dl>
+  <dt>
+  <li> How do I build the SpiderMonkey source for Mac OS X? I get an
+  error
+<pre>
+jsprf.c: In function 'BuildArgArray':
+jsprf.c:644: error: incompatible types in assignment      
+</pre>      
+  <dd> Add the following near the end of the file config.mk in the src/ directory
+<pre>
+ifeq ($(OS_ARCH), Darwin)
+ DEFINES += -DHAVE_VA_COPY -DVA_COPY=va_copy
+endif      
+</pre>      
+      
+</dl>
+
+
+<hr>
+<address><a href="http://www.stat.ucdavis.edu/~duncan">Duncan Temple Lang</a>
+<a href=mailto:duncan@wald.ucdavis.edu>&lt;duncan@wald.ucdavis.edu&gt;</a></address>
+<!-- hhmts start -->
+Last modified: Wed Jan 26 17:50:43 PST 2011
+<!-- hhmts end -->
+</body> </html>
