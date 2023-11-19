@@ -3,7 +3,7 @@ Title: Embeds the JavaScript interpreter Spider Monkey within R
 Version: 0.2-0
 Author: Duncan Temple Lang
 Maintainer: Duncan Temple Lang <duncan@r-project.org>
-License: Mozilla
+License: MPL-2.0
 Depends: RAutoGenRunTime, bitops
 Imports: Rffi
 Description:  This package provides a mechanism for
